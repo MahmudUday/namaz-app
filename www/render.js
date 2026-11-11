@@ -1,6 +1,7 @@
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 var savedLoc=lsGet('namaz.loc');
+var asrMethod=lsGet('namaz.asrMethod')||'hanafi';
 var loc=savedLoc||{mode:'district',name:'ঢাকা',lat:23.8103,lng:90.4125};
 var alarms=lsGet('namaz.alarms')||{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true};
 var nstate={ok:false,msg:'অ্যালার্ম সেট করা হচ্ছে…'};
@@ -9,7 +10,7 @@ function tzOf(){return loc.mode==='gps'?-new Date().getTimezoneOffset()/60:6}
 var days=null,daysKey='',prayers=[];
 function dayData(off){
   var tz=tzOf(),L=new Date(Date.now()+tz*36e5+off*864e5),y=L.getUTCFullYear(),m=L.getUTCMonth()+1,d=L.getUTCDate();
-  var r=calcDay(y,m,d,loc.lat,loc.lng,tz);
+  var r=calcDay(y,m,d,loc.lat,loc.lng,tz,asrMethod);
   function D(h){return new Date(Date.UTC(y,m-1,d)+(h-tz)*36e5)}
   var noon=D(r.noon),sunset=D(r.sunset);
   return{y:y,m:m,d:d,wd:L.getUTCDay(),fajr:D(r.fajr),sunrise:D(r.sunrise),noon:noon,dhuhr:new Date(noon.getTime()+120000),asr:D(r.asr),sunset:sunset,maghrib:new Date(sunset.getTime()+60000),isha:D(r.isha)};
@@ -39,6 +40,9 @@ function renderHeader(){
   var d=days[1];
   $('date').textContent=WD[d.wd]+', '+bn(d.d)+' '+MON[d.m-1]+' '+bn(d.y);
   $('place').textContent=loc.mode==='gps'?'আপনার অবস্থান ('+bn(loc.lat.toFixed(2))+'°, '+bn(loc.lng.toFixed(2))+'°)':loc.name;
+  var methodName=asrMethod==='hanafi'?'হানাফি':'শাফেয়ি/মালিকি/হাম্বলি';
+  var methodLabel=$('methodLabel');if(methodLabel)methodLabel.textContent='কারাচি পদ্ধতি · আসর '+methodName;
+  var aboutAsr=$('aboutAsrMethod');if(aboutAsr)aboutAsr.textContent=methodName;
 }
 function renderHero(cur,nxt){
   var h='';

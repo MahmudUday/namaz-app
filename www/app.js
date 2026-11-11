@@ -88,7 +88,7 @@ function useGps(){
   return getPos().then(function(p){
     setLoc({mode:'gps',name:'আপনার অবস্থান',lat:+p.lat.toFixed(4),lng:+p.lng.toFixed(4)});
     st.textContent='অবস্থান পাওয়া গেছে।';
-  },function(e){var m='জিপিএস পাওয়া যায়নি।';if(e&&(/permission/i.test(e.message||'')||e.code===1))m='লোকেশন অনুমতি দিন: Settings → Apps → নামাজ বাংলাদেশ → Permissions → Location।';else if(e&&e.code===2)m='ফোনের Location/GPS চালু করে আবার চেষ্টা করুন।';else if(e&&e.code===3)m='অবস্থান পেতে সময় লাগছে। খোলা জায়গায় গিয়ে আবার চেষ্টা করুন।';st.textContent=m;});
+  },function(e){var m='জিপিএস পাওয়া যায়নি।';if(e&&(/permission/i.test(e.message||'')||e.code===1))m='লোকেশন অনুমতি দিন: Settings → Apps → ওয়াক্ত → Permissions → Location।';else if(e&&e.code===2)m='ফোনের Location/GPS চালু করে আবার চেষ্টা করুন।';else if(e&&e.code===3)m='অবস্থান পেতে সময় লাগছে। খোলা জায়গায় গিয়ে আবার চেষ্টা করুন।';st.textContent=m;});
 }
 function buildSelect(){
   var h='<option value="gps" disabled>জিপিএস অবস্থান</option>';

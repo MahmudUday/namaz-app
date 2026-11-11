@@ -90,3 +90,29 @@ h2{font-family:var(--font-display);font-size:19px;font-weight:700;margin:0 0 6px
 .row .pill{background:var(--prayer-tint);color:var(--prayer-color)}
 .row .pill.soon{background:rgba(212,175,104,.16);color:var(--gold)}
 .row .bell[aria-pressed="true"]{color:var(--prayer-color);border-color:var(--prayer-line);background:var(--prayer-tint)}
+
+
+/* Subtle motion: scroll reveals, soft hover and tactile button feedback */
+.reveal-motion{
+  opacity:0;
+  transform:translate3d(0,16px,0);
+  transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1);
+  will-change:opacity,transform;
+}
+.reveal-motion.is-visible{opacity:1;transform:translate3d(0,0,0);will-change:auto}
+.row.reveal-motion{transition:opacity .48s ease,transform .48s cubic-bezier(.2,.7,.2,1),background .2s ease,border-color .2s ease}
+.hero.reveal-motion{transform:translate3d(0,12px,0) scale(.985)}
+.hero.reveal-motion.is-visible{transform:translate3d(0,0,0) scale(1)}
+.btn,.bell,select{
+  transition:transform .18s ease,background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease;
+}
+.btn:active,.bell:active{transform:scale(.95)}
+.btn:hover,.bell:hover{box-shadow:0 5px 18px rgba(0,0,0,.18)}
+.bell:active svg{transform:rotate(-12deg) scale(1.08)}
+.bell svg{transition:transform .2s ease}
+.set select:focus-visible,.btn:focus-visible,.bell:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.method,.pill{transition:background-color .2s ease,color .2s ease}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .reveal-motion{opacity:1;transform:none;will-change:auto}
+}

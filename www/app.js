@@ -119,6 +119,10 @@ if(reminderToggle){
   });
 }
 buildSelect();tick();setInterval(tick,1000);
+window.addEventListener('online',updateOfflineStatus);
+window.addEventListener('offline',updateOfflineStatus);
+document.addEventListener('visibilitychange',function(){if(!document.hidden){daysKey='';tick();updateOfflineStatus()}});
+updateOfflineStatus();
 schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
 
 

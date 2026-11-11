@@ -157,6 +157,15 @@ schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
   applyTheme(theme);
   var themeSelect=$('themeSelect');
   if(themeSelect){themeSelect.value=theme;themeSelect.addEventListener('change',function(){theme=themeSelect.value;lsSet('namaz.theme',theme);applyTheme(theme)})}
+  var asrSelect=$('asrSelect');
+  if(asrSelect){
+    asrSelect.value=asrMethod;
+    asrSelect.addEventListener('change',function(){
+      asrMethod=asrSelect.value==='standard'?'standard':'hanafi';
+      lsSet('namaz.asrMethod',asrMethod);
+      daysKey='';lastSig='';tick();schedule(0);
+    });
+  }
   var toneSelect=$('toneSelect');
   if(toneSelect){
     toneSelect.value=notificationTone;

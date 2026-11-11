@@ -1,7 +1,7 @@
 /* native alarms (Capacitor Local Notifications) */
 function plug(n){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins[n]}
 var busy=false,again=null;
-var remindersOn=lsGet('namaz.reminders')!==false;
+var remindersOn=lsGet('namaz.reminders')!==false;\nvar notificationTone=lsGet('namaz.tone')||'soft';
 var REMINDER_MINUTES=[40,20,5];
 async function schedule(level){
   if(busy){again=Math.max(again||0,level);return}
@@ -13,7 +13,7 @@ async function schedule(level){
     if(p.display!=='granted'&&level>=1)p=await LN.requestPermissions();
     if(p.display!=='granted'){nstate={ok:false,msg:'নোটিফিকেশনের অনুমতি দেওয়া হয়নি।'};return}
     try{var ex=await LN.checkExactNotificationSetting();if(ex.exact_alarm!=='granted'&&level>=2)await LN.changeExactNotificationSetting()}catch(e){}
-    await LN.createChannel({id:'azan_v1',name:'আজান',description:'নামাজের ওয়াক্তের অ্যালার্ম',importance:5,visibility:1,sound:'azan.wav',vibration:true});
+    var channelId=notificationTone==='soft'?'azan_v1_soft':'azan_v1_default';\n    var channelOptions={id:channelId,name:notificationTone==='soft'?'নরম টোন':'ফোনের ডিফল্ট সাউন্ড',description:'নামাজের ওয়াক্তের অ্যালার্ম',importance:5,visibility:1,vibration:true};\n    if(notificationTone==='soft')channelOptions.sound='azan.wav';\n    await LN.createChannel(channelOptions);
     var pend=await LN.getPending();
     if(pend.notifications&&pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(function(n){return{id:n.id}})});
     var list=[],now=Date.now();
@@ -21,7 +21,7 @@ async function schedule(level){
       var d=dayData(off);
       PR.forEach(function(q,i){
         var t=d[q.k];
-        if(alarms[q.k]&&t.getTime()>now+3000)list.push({id:1000+off*10+i,title:q.n+' নামাজের ওয়াক্ত',body:'এখন '+fmtInline(t)+'। নামাজের প্রস্তুতি নিন।',schedule:{at:t,allowWhileIdle:true},channelId:'azan_v1',sound:'azan.wav'});
+        if(alarms[q.k]&&t.getTime()>now+3000)list.push({id:1000+off*10+i,title:q.n+' নামাজের ওয়াক্ত',body:'এখন '+fmtInline(t)+'। নামাজের প্রস্তুতি নিন।',schedule:{at:t,allowWhileIdle:true},channelId:channelId});
       });
       if(remindersOn){
         var intervals=[
@@ -37,7 +37,7 @@ async function schedule(level){
                 id:2000+off*100+i*3+j,
                 title:PR[i].n+'-এর ওয়াক্ত শেষ হতে '+bn(minutes)+' মিনিট বাকি',
                 body:'নামাজ না পড়ে থাকলে ওয়াক্ত শেষ হওয়ার আগেই দ্রুত আদায় করে নিন।',
-                schedule:{at:at,allowWhileIdle:true},channelId:'azan_v1',sound:'azan.wav'
+                schedule:{at:at,allowWhileIdle:true},channelId:channelId
               });
             }
           });
@@ -58,7 +58,7 @@ async function testAlarm(){
   if(!LN){st.textContent='এই ফোনে নোটিফিকেশন নেই।';return}
   await schedule(2);
   try{
-    await LN.schedule({notifications:[{id:9999,title:'পরীক্ষা',body:'অ্যালার্ম এভাবে বাজবে।',schedule:{at:new Date(Date.now()+10000),allowWhileIdle:true},channelId:'azan_v1',sound:'azan.wav'}]});
+    await LN.schedule({notifications:[{id:9999,title:'পরীক্ষা',body:'অ্যালার্ম এভাবে বাজবে।',schedule:{at:new Date(Date.now()+10000),allowWhileIdle:true},channelId:notificationTone==='soft'?'azan_v1_soft':'azan_v1_default'}]});
     st.textContent='১০ সেকেন্ড পরে নোটিফিকেশন আসবে।';
   }catch(e){st.textContent='পরীক্ষা করা যায়নি।'}
 }
@@ -143,7 +143,25 @@ schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
 })();
 
 
-/* Bottom navigation: switch pages without reloading or interrupting alarms. */
+
+/* Persistent appearance and notification sound preferences. */
+(function initPreferences(){
+  var theme=lsGet('namaz.theme')||'dark';
+  function applyTheme(value){document.documentElement.setAttribute('data-theme',value==='system'?'system':value)}
+  applyTheme(theme);
+  var themeSelect=$('themeSelect');
+  if(themeSelect){themeSelect.value=theme;themeSelect.addEventListener('change',function(){theme=themeSelect.value;lsSet('namaz.theme',theme);applyTheme(theme)})}
+  var toneSelect=$('toneSelect');
+  if(toneSelect){
+    toneSelect.value=notificationTone;
+    toneSelect.addEventListener('change',function(){
+      notificationTone=toneSelect.value;lsSet('namaz.tone',notificationTone);
+      schedule(0);
+      var st=$('testStatus');if(st)st.textContent='নতুন সাউন্ড অনুযায়ী অ্যালার্ম আপডেট হচ্ছে…';
+    });
+  }
+})();
+\n/* Bottom navigation: switch pages without reloading or interrupting alarms. */
 (function initBottomNav(){
   var nav=document.querySelector('.bottom-nav');
   if(!nav)return;

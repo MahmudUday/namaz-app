@@ -51,7 +51,7 @@ function renderRows(cur,nxt){
   var d=days[1],out='';
   prayers.filter(function(p){return p.day===0}).forEach(function(p){
     var s=fmt(p.s),e=fmt(p.e),isNow=cur&&cur.id===p.id,isNext=nxt&&nxt.id===p.id;
-    out+='<div class="row'+(isNow?' now':'')+'"><div class="nm">'+NAME[p.k]+(isNow?'<span class="pill">চলছে</span>':isNext?'<span class="pill soon">পরবর্তী</span>':'')+(p.k==='dhuhr'&&d.wd===5?'<small>জুমার নামাজ</small>':'')+'</div><div class="t"><b>'+s.t+'</b><small>'+s.p+'</small></div><div class="t end"><b>'+e.t+'</b><small>'+e.p+'</small></div><button class="bell" type="button" data-k="'+p.k+'" aria-pressed="'+(alarms[p.k]?'true':'false')+'" aria-label="'+NAME[p.k]+' অ্যালার্ম">'+BELL+'</button></div>';
+    out+='<div class="row prayer-'+p.k+(isNow?' now':'')+'"><div class="nm">'+NAME[p.k]+(isNow?'<span class="pill">চলছে</span>':isNext?'<span class="pill soon">পরবর্তী</span>':'')+(p.k==='dhuhr'&&d.wd===5?'<small>জুমার নামাজ</small>':'')+'</div><div class="t"><b>'+s.t+'</b><small>'+s.p+'</small></div><div class="t end"><b>'+e.t+'</b><small>'+e.p+'</small></div><button class="bell" type="button" data-k="'+p.k+'" aria-pressed="'+(alarms[p.k]?'true':'false')+'" aria-label="'+NAME[p.k]+' অ্যালার্ম">'+BELL+'</button></div>';
   });
   $('rows').innerHTML=out;
 }

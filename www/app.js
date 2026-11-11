@@ -33,7 +33,7 @@ async function schedule(level){
             if(duration>minutes*60000&&at.getTime()>now+3000){
               list.push({
                 id:2000+off*100+i*3+j,
-                title:pname({k:p[0],day:0})+'-এর ওয়াক্ত শেষ হতে '+bn(minutes)+' মিনিট বাকি',
+                title:PR[i].n+'-এর ওয়াক্ত শেষ হতে '+bn(minutes)+' মিনিট বাকি',
                 body:'নামাজ না পড়ে থাকলে ওয়াক্ত শেষ হওয়ার আগেই দ্রুত আদায় করে নিন।',
                 schedule:{at:at,allowWhileIdle:true},channelId:'azan_v1',sound:'azan.wav'
               });

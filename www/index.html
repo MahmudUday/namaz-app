@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070a09">
+<title>নামাজ বাংলাদেশ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@500;700&family=Noto+Sans+Bengali:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><div class="date" id="date"></div><div class="place" id="place"></div></div>
+    <div class="method">কারাচি পদ্ধতি · আসর হানাফি</div>
+  </header>
+  <section class="hero" id="hero"></section>
+  <section class="armbar" id="armbar"></section>
+  <section>
+    <h2>আজকের ওয়াক্ত</h2>
+    <p class="sec-note">ঘণ্টা আইকনে চাপ দিয়ে প্রতি ওয়াক্তের অ্যালার্ম চালু বা বন্ধ করুন।</p>
+    <div class="cols"><span>নামাজ</span><span>শুরু</span><span>শেষ</span><span></span></div>
+    <div class="rows" id="rows"></div>
+  </section>
+  <section>
+    <h2>আরও সময়</h2>
+    <div class="ex" id="extras"></div>
+    <p class="fine" style="margin-top:10px">সূর্যোদয়, দুপুর ও সূর্যাস্তের সময় ফরজ ছাড়া নফল নামাজ পড়া মাকরুহ। মাকরুহ সময়ের হিসাব আনুমানিক।</p>
+  </section>
+  <section class="set">
+    <h2 style="margin:0">অবস্থান ও অ্যালার্ম</h2>
+    <div class="line"><button class="btn" id="gpsBtn" type="button">জিপিএস দিয়ে অবস্থান নিন</button><span class="status" id="gpsStatus"></span></div>
+    <div><label for="district">অথবা জেলা বেছে নিন</label><select id="district"></select></div>
+    <div class="line"><button class="btn" id="testBtn" type="button">অ্যালার্ম পরীক্ষা করুন</button><span class="status" id="testStatus"></span></div>
+    <p class="fine"><b>ফোনের সেটিং (Tecno):</b><br>১. Settings → Apps → এই অ্যাপ → Battery → No restrictions<br>২. Phone Master → Autostart-এ এই অ্যাপ চালু করুন<br>৩. Recent apps-এ অ্যাপের ওপর চেপে ধরে Lock করুন<br>৪. Settings-এ Alarms &amp; reminders ও Notifications অনুমতি চালু রাখুন<br>অ্যালার্মের সুরটি একটি নরম টোন, আজানের রেকর্ড নয়। মসজিদের টাইম টেবিলের সাথে ১ থেকে ৩ মিনিট ফারাক হতে পারে। অ্যালার্ম ঠিক রাখতে ১৪ দিনে অন্তত একবার অ্যাপ খুলুন।</p>
+  </section>
+</div>
+
+<script src="calc.js"></script>
+<script src="render.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

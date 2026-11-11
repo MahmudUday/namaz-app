@@ -13,7 +13,7 @@
   <main class="page-view active" id="homePage" data-page="home">
   <header class="top">
     <div><div class="date" id="date"></div><div class="place" id="place"></div></div>
-    <div class="method">কারাচি পদ্ধতি · আসর হানাফি</div>
+    <div class="method" id="methodLabel">কারাচি পদ্ধতি · আসর হানাফি</div>
   </header>
   <section class="hero" id="hero"></section>
   <section class="armbar" id="armbar"></section>
@@ -55,6 +55,10 @@
     <div class="setting-control"><label for="district">অথবা জেলা বেছে নিন</label><select id="district"></select></div>
   </section>
   <section class="set settings-group">
+    <div class="setting-heading"><span class="setting-symbol">☼</span><div><h2>আসরের সময় গণনা</h2><small>তোমার অনুসৃত মাজহাব অনুযায়ী নিয়ম বেছে নাও</small></div></div>
+    <div class="setting-control"><label for="asrSelect">আসরের হিসাবের নিয়ম</label><select id="asrSelect"><option value="hanafi">হানাফি (ছায়া দ্বিগুণ)</option><option value="standard">শাফেয়ি / মালিকি / হাম্বলি (ছায়া সমান)</option></select><small class="setting-help">পরিবর্তন করলে আজকের সময়সূচি ও পরবর্তী অ্যালার্ম নতুন নিয়মে হিসাব হবে। ফজর ও এশার জন্য কারাচি পদ্ধতি অপরিবর্তিত থাকবে।</small></div>
+  </section>
+  <section class="set settings-group">
     <div class="setting-heading"><span class="setting-symbol">♬</span><div><h2>নোটিফিকেশন ও অ্যালার্ম</h2><small>নামাজের সময় মনে রাখার সহায়ক নিয়ন্ত্রণ</small></div></div>
     <div class="setting-control"><label for="toneSelect">নোটিফিকেশনের সুর</label><select id="toneSelect"><option value="soft">স্পষ্ট ও শ্রুতিমধুর সুর (নতুন)</option><option value="default">ফোনের ডিফল্ট সাউন্ড</option></select><small class="setting-help">সুর বদলালে নতুন অ্যালার্মগুলোতে সেটি প্রয়োগ হবে।</small></div>
     <div class="reminder-setting">
@@ -71,7 +75,7 @@
     <div class="setting-heading"><span class="setting-symbol">ⓘ</span><div><h2>অ্যাপের তথ্য</h2><small>সংস্করণ ও সময় গণনার নিয়ম</small></div></div>
     <div class="info-line"><span>অ্যাপের সংস্করণ</span><b>v1.5.0</b></div>
     <div class="info-line"><span>নামাজের সময় গণনা</span><b>কারাচি পদ্ধতি</b></div>
-    <div class="info-line"><span>আসরের নিয়ম</span><b>হানাফি</b></div>
+    <div class="info-line"><span>আসরের নিয়ম</span><b id="aboutAsrMethod">হানাফি</b></div>
   </section>
 </main>
   <main class="page-view about-page" id="aboutPage" data-page="about" hidden>

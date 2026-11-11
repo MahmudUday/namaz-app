@@ -116,3 +116,26 @@ h2{font-family:var(--font-display);font-size:19px;font-weight:700;margin:0 0 6px
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .reveal-motion{opacity:1;transform:none;will-change:auto}
 }
+
+
+/* Current prayer is primary; next prayer is a compact preview beneath it */
+.hero{padding:34px 18px 20px;border-radius:34px 34px 24px 24px}
+.hero .current-prayer{padding:8px 0 20px}
+.hero .hero-label{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--jade);font-size:14px;font-weight:600}
+.hero .live-dot{width:8px;height:8px;border-radius:50%;background:var(--jade);box-shadow:0 0 0 4px rgba(76,184,144,.15);animation:livePulse 2s ease-in-out infinite}
+.hero .current-name{font-family:var(--font-display);font-size:clamp(34px,9vw,48px);font-weight:700;line-height:1.25;color:var(--gold);margin:4px 0 5px}
+.hero .current-range{font-size:clamp(15px,4vw,19px);font-weight:600;color:var(--fg);line-height:1.6}
+.hero .current-range span,.hero .next-range span{font-size:.82em;font-weight:400;color:var(--muted)}
+.hero .current-left{margin-top:7px;font-size:12.5px;color:var(--muted)}
+.hero .current-left b{font-family:var(--font-display);font-size:16px;color:var(--jade);margin-left:4px}
+.hero .no-current{padding:10px 0 18px}
+.hero .no-current .hero-label{color:var(--muted)}
+.hero .no-current .current-name{font-size:25px;color:var(--muted);margin-top:8px}
+.hero .next-prayer{border-top:1px solid var(--line);padding:15px 8px 0;margin-top:2px}
+.hero .next-heading{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.hero .next-name{font-family:var(--font-display);font-size:25px;font-weight:700;line-height:1.3;color:var(--gold);margin-top:1px}
+.hero .next-range{font-size:14px;color:var(--fg);margin-top:2px}
+.hero .next-count-label{font-size:12px;color:var(--muted);margin-top:5px}
+.hero .next-count-label b{font-family:var(--font-display);font-size:15px;color:var(--jade);margin-left:4px}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 3px rgba(76,184,144,.13)}50%{box-shadow:0 0 0 6px rgba(76,184,144,.04)}}
+@media (prefers-reduced-motion:reduce){.hero .live-dot{animation:none}}

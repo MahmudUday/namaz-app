@@ -42,9 +42,14 @@ function renderHeader(){
 }
 function renderHero(cur,nxt){
   var h='';
-  if(nxt){var f=fmt(nxt.s);
-    h+='<div class="eyebrow">পরবর্তী ওয়াক্ত'+(nxt.day===1?' · আগামীকাল':'')+'</div><div class="nname">'+pname(nxt)+'</div><div class="nstart">'+f.t+' <small>'+f.p+'</small></div><div class="cdlabel">শুরু হতে বাকি</div><div class="cd" id="cd"></div>';}
-  h+=cur?'<div class="cur">এখন চলছে <b>'+pname(cur)+'</b> · শেষ হবে '+fmtInline(cur.e)+' (বাকি <span id="curleft"></span>)</div>':'<div class="cur">এখন কোনো ফরজ নামাজের ওয়াক্ত চলছে না</div>';
+  if(cur){
+    h+='<div class="current-prayer"><div class="hero-label"><span class="live-dot"></span>এখন চলছে</div><div class="current-name">'+pname(cur)+'</div><div class="current-range">'+fmtInline(cur.s)+' <span>থেকে</span> '+fmtInline(cur.e)+'</div><div class="current-left">ওয়াক্ত শেষ হতে বাকি <b id="curleft"></b></div></div>';
+  }else{
+    h+='<div class="current-prayer no-current"><div class="hero-label">বর্তমানে</div><div class="current-name">কোনো নামাজের ওয়াক্ত চলছে না</div></div>';
+  }
+  if(nxt){
+    h+='<div class="next-prayer"><div class="next-heading">পরবর্তী ওয়াক্ত'+(nxt.day===1?' · আগামীকাল':'')+'</div><div class="next-name">'+pname(nxt)+'</div><div class="next-range">'+fmtInline(nxt.s)+' <span>থেকে</span> '+fmtInline(nxt.e)+'</div><div class="next-count-label">শুরু হতে বাকি <b id="cd"></b></div></div>';
+  }
   $('hero').innerHTML=h;
 }
 function renderRows(cur,nxt){

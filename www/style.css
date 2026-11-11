@@ -275,3 +275,95 @@ html[data-theme="light"]{color-scheme:light;--bg:#f4f2eb;--surface:#fffdf7;--sur
 .fasting-count small{display:block;color:var(--muted);font-size:10px}
 .fasting-note{font-size:11px;line-height:1.75;color:var(--muted);margin:10px 1px 0}
 @media(max-width:360px){.fasting-time b{font-size:19px}}
+
+
+/* WAQT refined motion, scroll reveals and calmer spacing */
+:root{
+  --motion-ease:cubic-bezier(.22,.75,.22,1);
+  --section-space:28px;
+}
+html{scroll-behavior:smooth;scroll-padding-top:22px}
+body{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+}
+.wrap{gap:var(--section-space)}
+.page-view{
+  display:flex;
+  flex-direction:column;
+  gap:var(--section-space);
+  min-width:0;
+}
+.page-view[hidden]{display:none}
+.page-view > section,
+.page-view > header{margin:0}
+.page-view > section > h2{margin-bottom:10px}
+.sec-note{margin-bottom:13px;line-height:1.75}
+.cols{padding-bottom:9px}
+.rows{gap:12px}
+.row{padding-top:15px;padding-bottom:15px}
+.hero{box-shadow:0 12px 34px rgba(0,0,0,.10)}
+.armbar,.ex,.set,.tahajjud-section,.fasting-section,.about-card{
+  box-shadow:0 10px 28px rgba(0,0,0,.075);
+}
+.settings-group{gap:18px;padding:19px 16px}
+.settings-intro{padding:10px 5px 2px}
+.about-page{min-height:65vh}
+.about-card{padding:32px 22px}
+.about-points{gap:12px}
+.about-points>div{padding:13px}
+
+/* Enter and leave viewport gently in both scroll directions */
+.reveal-motion{
+  opacity:0;
+  transform:translate3d(0,18px,0);
+  filter:blur(1.5px);
+  transition:
+    opacity .62s var(--motion-ease),
+    transform .68s var(--motion-ease),
+    filter .62s var(--motion-ease);
+  will-change:opacity,transform;
+}
+.reveal-motion.is-visible{
+  opacity:1;
+  transform:translate3d(0,0,0);
+  filter:blur(0);
+  will-change:auto;
+}
+.row.reveal-motion{
+  transition:
+    opacity .52s var(--motion-ease),
+    transform .58s var(--motion-ease),
+    filter .52s var(--motion-ease),
+    background .24s ease,
+    border-color .24s ease;
+}
+.rows .row:nth-child(2){transition-delay:.035s}
+.rows .row:nth-child(3){transition-delay:.07s}
+.rows .row:nth-child(4){transition-delay:.105s}
+.rows .row:nth-child(5){transition-delay:.14s}
+.hero.reveal-motion{transform:translate3d(0,14px,0) scale(.988)}
+.hero.reveal-motion.is-visible{transform:translate3d(0,0,0) scale(1)}
+.page-view.active{animation:pageEnter .48s var(--motion-ease) both}
+@keyframes pageEnter{
+  from{opacity:0;transform:translate3d(0,10px,0);filter:blur(2px)}
+  to{opacity:1;transform:translate3d(0,0,0);filter:blur(0)}
+}
+.btn,.bell,.nav-item,.set select{
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:active,.bell:active,.nav-item:active{transition-duration:.12s}
+.bottom-nav{transition:box-shadow .3s ease,border-color .3s ease}
+.nav-item{transition:color .28s ease,background .28s ease,transform .28s var(--motion-ease)}
+.nav-icon{transition:transform .3s var(--motion-ease)}
+@media(max-width:380px){
+  :root{--section-space:23px}
+  .settings-group{padding:16px 13px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal-motion,.reveal-motion.is-visible{
+    opacity:1;transform:none;filter:none;transition:none;will-change:auto
+  }
+  .page-view.active{animation:none}
+}

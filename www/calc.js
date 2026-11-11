@@ -5,10 +5,11 @@ function fixa(a,b){a=a-b*Math.floor(a/b);return a<0?a+b:a}
 function julian(y,m,d){if(m<=2){y-=1;m+=12}var A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5}
 function sunPos(jd){var D=jd-2451545.0,g=fixa(357.529+0.98560028*D,360),q=fixa(280.459+0.98564736*D,360),L=fixa(q+1.915*dsin(g)+0.020*dsin(2*g),360),e=23.439-0.00000036*D,RA=datan2(dcos(e)*dsin(L),dcos(L))/15;return{decl:dasin(dsin(e)*dsin(L)),eqt:q/15-fixa(RA,24)}}
 /* Karachi: Fajr/Isha 18 deg. Hanafi Asr (shadow factor 2). Returns local hours. */
-function calcDay(y,m,d,lat,lng,tz){
+function calcDay(y,m,d,lat,lng,tz,asrMethod){
   var jd=julian(y,m,d)-lng/(15*24),sp=sunPos(jd),decl=sp.decl,noon=12+tz-lng/15-sp.eqt;
   function ang(a){var v=(-dsin(a)-dsin(decl)*dsin(lat))/(dcos(decl)*dcos(lat));return dacos(Math.max(-1,Math.min(1,v)))/15}
-  var asrA=-dacot(2+dtan(Math.abs(lat-decl)));
+  var asrFactor=asrMethod==='standard'?1:2;
+  var asrA=-dacot(asrFactor+dtan(Math.abs(lat-decl)));
   return{fajr:noon-ang(18),sunrise:noon-ang(0.833),noon:noon,asr:noon+ang(asrA),sunset:noon+ang(0.833),isha:noon+ang(18)};
 }
 

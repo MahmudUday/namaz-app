@@ -71,13 +71,15 @@ async function testAlarm(){
 function getPos(){
   var G=plug('Geolocation');
   if(G){return(async function(){
-    try{var p=await G.checkPermissions();if(p.location!=='granted'&&p.coarseLocation!=='granted')await G.requestPermissions({permissions:['location']})}catch(e){}
-    var r=await G.getCurrentPosition({enableHighAccuracy:false,timeout:15000});
+    var p=await G.checkPermissions();
+    if(p.location!=='granted'&&p.coarseLocation!=='granted')p=await G.requestPermissions();
+    if(p.location!=='granted'&&p.coarseLocation!=='granted')throw new Error('permission');
+    var r=await G.getCurrentPosition({enableHighAccuracy:true,timeout:20000,maximumAge:60000});
     return{lat:r.coords.latitude,lng:r.coords.longitude};
   })()}
   return new Promise(function(res,rej){
-    if(!navigator.geolocation)return rej();
-    navigator.geolocation.getCurrentPosition(function(p){res({lat:p.coords.latitude,lng:p.coords.longitude})},rej,{timeout:10000});
+    if(!navigator.geolocation)return rej(new Error('unsupported'));
+    navigator.geolocation.getCurrentPosition(function(p){res({lat:p.coords.latitude,lng:p.coords.longitude})},rej,{enableHighAccuracy:true,timeout:20000,maximumAge:60000});
   });
 }
 function setLoc(l){loc=l;lsSet('namaz.loc',loc);daysKey='';lastSig='';syncSelect();tick();schedule(0)}
@@ -86,7 +88,7 @@ function useGps(){
   return getPos().then(function(p){
     setLoc({mode:'gps',name:'আপনার অবস্থান',lat:+p.lat.toFixed(4),lng:+p.lng.toFixed(4)});
     st.textContent='অবস্থান পাওয়া গেছে।';
-  },function(){st.textContent='জিপিএস পাওয়া যায়নি। নিচের তালিকা থেকে জেলা বেছে নিন।'});
+  },function(e){var m='জিপিএস পাওয়া যায়নি।';if(e&&(/permission/i.test(e.message||'')||e.code===1))m='লোকেশন অনুমতি দিন: Settings → Apps → নামাজ বাংলাদেশ → Permissions → Location।';else if(e&&e.code===2)m='ফোনের Location/GPS চালু করে আবার চেষ্টা করুন।';else if(e&&e.code===3)m='অবস্থান পেতে সময় লাগছে। খোলা জায়গায় গিয়ে আবার চেষ্টা করুন।';st.textContent=m;});
 }
 function buildSelect(){
   var h='<option value="gps" disabled>জিপিএস অবস্থান</option>';

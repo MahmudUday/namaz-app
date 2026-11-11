@@ -1,6 +1,6 @@
 /* native alarms (Capacitor Local Notifications) */
 function plug(n){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins[n]}
-var busy=false,again=null;
+var busy=false,again=null;\nvar remindersOn=lsGet('namaz.reminders')!==false;\nvar REMINDER_MINUTES=[40,20,5];
 async function schedule(level){
   if(busy){again=Math.max(again||0,level);return}
   busy=true;
@@ -21,6 +21,26 @@ async function schedule(level){
         var t=d[q.k];
         if(alarms[q.k]&&t.getTime()>now+3000)list.push({id:1000+off*10+i,title:q.n+' নামাজের ওয়াক্ত',body:'এখন '+fmtInline(t)+'। নামাজের প্রস্তুতি নিন।',schedule:{at:t,allowWhileIdle:true},channelId:'azan_v1',sound:'azan.wav'});
       });
+      if(remindersOn){
+        var intervals=[
+          ['fajr',d.fajr,d.sunrise],['dhuhr',d.dhuhr,d.asr],['asr',d.asr,d.maghrib],
+          ['maghrib',d.maghrib,d.isha],['isha',d.isha,dayData(off+1).fajr]
+        ];
+        intervals.forEach(function(p,i){
+          var duration=p[2].getTime()-p[1].getTime();
+          REMINDER_MINUTES.forEach(function(minutes,j){
+            var at=new Date(p[2].getTime()-minutes*60000);
+            if(duration>minutes*60000&&at.getTime()>now+3000){
+              list.push({
+                id:2000+off*100+i*3+j,
+                title:pname({k:p[0],day:0})+'-এর ওয়াক্ত শেষ হতে '+bn(minutes)+' মিনিট বাকি',
+                body:'নামাজ না পড়ে থাকলে ওয়াক্ত শেষ হওয়ার আগেই দ্রুত আদায় করে নিন।',
+                schedule:{at:at,allowWhileIdle:true},channelId:'azan_v1',sound:'azan.wav'
+              });
+            }
+          });
+        });
+      }
     }
     if(list.length)await LN.schedule({notifications:list});
     nstate={ok:true,msg:'পরবর্তী ১৪ দিনের অ্যালার্ম সেট আছে ('+bn(list.length)+'টি)।'};
@@ -81,6 +101,15 @@ document.addEventListener('click',function(ev){
   else if(b.id==='testBtn')testAlarm();
   else if(b.id==='gpsBtn')useGps();
 });
+var reminderToggle=$('reminderToggle');
+if(reminderToggle){
+  reminderToggle.checked=remindersOn;
+  reminderToggle.addEventListener('change',function(){
+    remindersOn=reminderToggle.checked;
+    lsSet('namaz.reminders',remindersOn);
+    schedule(0);
+  });
+}
 buildSelect();tick();setInterval(tick,1000);
 schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
 

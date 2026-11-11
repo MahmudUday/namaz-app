@@ -60,3 +60,33 @@ h2{font-family:var(--font-display);font-size:19px;font-weight:700;margin:0 0 6px
 .set .status{font-size:12.5px;color:var(--muted)}
 .fine{font-size:12px;color:var(--muted);line-height:1.8;margin:0}
 @media (max-width:380px){.cols,.row{grid-template-columns:1fr 66px 66px 44px;gap:8px}.hero .nname{font-size:40px}}
+
+
+/* Distinct, readable accents for each prayer time card */
+.rows{gap:9px}
+.row{
+  border:1px solid var(--prayer-line,var(--line));
+  border-left:4px solid var(--prayer-color,var(--gold));
+  border-radius:14px;
+  background:linear-gradient(105deg,var(--prayer-tint,transparent),transparent 72%),var(--surface);
+  padding:13px 12px 13px 10px;
+  transition:background .2s ease,border-color .2s ease;
+}
+.row:last-child{border-bottom:1px solid var(--prayer-line,var(--line))}
+.row.now{
+  background:linear-gradient(105deg,var(--prayer-tint),transparent 78%),var(--surface-2);
+  border-color:var(--prayer-line);
+  border-left-color:var(--prayer-color);
+  outline:1px solid var(--prayer-line);
+}
+.prayer-fajr{--prayer-color:#69b9ee;--prayer-line:rgba(105,185,238,.36);--prayer-tint:rgba(105,185,238,.10)}
+.prayer-dhuhr{--prayer-color:#e5bd65;--prayer-line:rgba(229,189,101,.36);--prayer-tint:rgba(229,189,101,.10)}
+.prayer-asr{--prayer-color:#55c69a;--prayer-line:rgba(85,198,154,.36);--prayer-tint:rgba(85,198,154,.10)}
+.prayer-maghrib{--prayer-color:#ed9860;--prayer-line:rgba(237,152,96,.36);--prayer-tint:rgba(237,152,96,.10)}
+.prayer-isha{--prayer-color:#ad9be9;--prayer-line:rgba(173,155,233,.36);--prayer-tint:rgba(173,155,233,.10)}
+.row .nm{color:var(--prayer-color,var(--fg))}
+.row .t b{color:var(--prayer-color,var(--fg))}
+.row .t.end b{color:var(--muted)}
+.row .pill{background:var(--prayer-tint);color:var(--prayer-color)}
+.row .pill.soon{background:rgba(212,175,104,.16);color:var(--gold)}
+.row .bell[aria-pressed="true"]{color:var(--prayer-color);border-color:var(--prayer-line);background:var(--prayer-tint)}

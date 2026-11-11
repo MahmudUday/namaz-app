@@ -32,31 +32,36 @@ jobs:
           mkdir -p android/app/src/main/res/raw
           python3 - <<'PY'
           import wave, struct, math
-          sr = 22050
-          phrase = [(293.66,.6),(311.13,.5),(369.99,.5),(392.0,.9),(440.0,1.5),(392.0,.5),(369.99,.5),(311.13,.5),(293.66,1.9)]
-          total = int((sum(d for _, d in phrase) * 2 + 3.5) * sr)
-          mix = [0.0] * total
-          pos = 0
-          for rep in range(2):
-              for f, d in phrase:
-                  for i in range(int((d + 0.6) * sr)):
+          sr = 24000
+          # Original bright bell-like notification melody; not Adhan audio.
+          phrase = [(392.00,.42),(493.88,.42),(587.33,.52),(783.99,.72),
+                    (659.25,.42),(587.33,.42),(493.88,.52),(392.00,.82)]
+          samples = []
+          for repeat in range(2):
+              for freq, duration in phrase:
+                  count = int(duration * sr)
+                  for i in range(count):
                       t = i / sr
-                      env = min(1.0, t / 0.05) * math.exp(-2.5 * t / (d + 0.3))
-                      v = env * (0.55 * math.sin(2 * math.pi * f * t) + 0.18 * math.sin(4 * math.pi * f * t))
-                      if pos + i < total:
-                          mix[pos + i] += v
-                  pos += int(d * sr)
-              pos += int(1.2 * sr)
-          dl = int(0.27 * sr)
-          for i in range(dl, total):
-              mix[i] += 0.3 * mix[i - dl]
-          peak = max(abs(x) for x in mix) or 1.0
-          w = wave.open('android/app/src/main/res/raw/azan.wav', 'wb')
-          w.setnchannels(1)
-          w.setsampwidth(2)
-          w.setframerate(sr)
-          w.writeframes(b''.join(struct.pack('<h', int(x / peak * 30000)) for x in mix))
-          w.close()
+                      attack = min(1.0, t / 0.018)
+                      decay = math.exp(-2.15 * t / duration)
+                      env = attack * decay
+                      fundamental = math.sin(2 * math.pi * freq * t)
+                      second = math.sin(2 * math.pi * freq * 2 * t)
+                      third = math.sin(2 * math.pi * freq * 3 * t)
+                      fourth = math.sin(2 * math.pi * freq * 4 * t)
+                      samples.append(env * (0.62 * fundamental + 0.25 * second + 0.10 * third + 0.035 * fourth))
+                  samples.extend([0.0] * int(0.055 * sr))
+              samples.extend([0.0] * int(0.42 * sr))
+          delay = int(0.19 * sr)
+          dry = samples[:]
+          for i in range(delay, len(samples)):
+              samples[i] += 0.22 * dry[i - delay]
+          peak = max(abs(x) for x in samples) or 1.0
+          with wave.open('android/app/src/main/res/raw/azan.wav', 'wb') as out:
+              out.setnchannels(1)
+              out.setsampwidth(2)
+              out.setframerate(sr)
+              out.writeframes(b''.join(struct.pack('<h', int(max(-1.0, min(1.0, x / peak * 0.94)) * 32767)) for x in samples))
           PY
 
       - name: Add permissions

@@ -139,3 +139,17 @@ h2{font-family:var(--font-display);font-size:19px;font-weight:700;margin:0 0 6px
 .hero .next-count-label b{font-family:var(--font-display);font-size:15px;color:var(--jade);margin-left:4px}
 @keyframes livePulse{0%,100%{box-shadow:0 0 0 3px rgba(76,184,144,.13)}50%{box-shadow:0 0 0 6px rgba(76,184,144,.04)}}
 @media (prefers-reduced-motion:reduce){.hero .live-dot{animation:none}}
+
+
+/* Prayer-window reminder preference toggle */
+.reminder-setting{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:12px}
+.reminder-toggle{display:flex!important;align-items:center;gap:12px;cursor:pointer;margin:0!important}
+.reminder-copy{display:flex;flex:1;flex-direction:column;gap:3px;min-width:0}
+.reminder-copy b{font-size:14px;color:var(--fg);font-weight:600}
+.reminder-copy small{font-size:11.5px;color:var(--muted);line-height:1.55}
+.reminder-toggle input{position:absolute;opacity:0;width:1px;height:1px}
+.toggle-ui{position:relative;flex:none;width:44px;height:26px;border-radius:99px;background:#35413b;transition:background .2s ease}
+.toggle-ui::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#e9e5da;transition:transform .2s ease}
+.reminder-toggle input:checked+.toggle-ui{background:var(--jade)}
+.reminder-toggle input:checked+.toggle-ui::after{transform:translateX(18px)}
+.reminder-toggle input:focus-visible+.toggle-ui{outline:2px solid var(--gold);outline-offset:3px}

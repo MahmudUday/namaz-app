@@ -199,3 +199,32 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
 .about-card .about-version{text-align:center!important;border-top:1px solid var(--line);padding-top:15px;margin-top:18px;font-size:11px}
 @keyframes aboutGlow{0%,100%{box-shadow:0 0 0 0 rgba(212,175,104,0)}50%{box-shadow:0 0 22px rgba(212,175,104,.12)}}
 @media(prefers-reduced-motion:reduce){.page-view,.about-mark{animation:none}.nav-item,.nav-icon{transition:none}}
+
+
+/* Settings panels, persistent themes and app identity */
+.settings-intro{padding:8px 4px 0}
+.settings-kicker{font:600 10px system-ui,sans-serif;letter-spacing:.16em;color:var(--jade)}
+.settings-intro h1{font-family:var(--font-display);font-size:29px;line-height:1.3;margin:3px 0;color:var(--gold)}
+.settings-intro p{font-size:13px;color:var(--muted);margin:0}
+.settings-group{gap:15px}
+.setting-heading{display:flex;align-items:center;gap:11px}
+.setting-heading>div{display:flex;flex-direction:column;gap:1px}
+.setting-heading h2{margin:0;font-size:18px}
+.setting-heading small,.setting-help{font-size:11.5px;color:var(--muted)}
+.setting-symbol{width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--gold-dim);border-radius:13px;color:var(--gold);background:rgba(212,175,104,.08);font-size:21px}
+.setting-control{display:flex;flex-direction:column;gap:4px}
+.setting-control label{margin:0!important;color:var(--fg)!important;font-size:13px!important}
+.setting-help{line-height:1.6}
+.permission-note{padding:11px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line)}
+.permission-note b{font-size:12px;color:var(--gold)}
+.permission-note p{font-size:11.5px;color:var(--muted);line-height:1.7;margin:4px 0 0}
+.info-line{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.info-line:last-child{border-bottom:0;padding-bottom:0}
+.info-line span{color:var(--muted)}.info-line b{color:var(--fg);font-weight:600}
+.about-dua{margin:20px 0;padding:15px 14px;border:1px solid var(--gold-dim);border-radius:15px;background:rgba(212,175,104,.07);color:var(--gold);font-size:14px;line-height:1.9;text-align:center}
+.about-credit{display:flex;flex-direction:column;gap:3px;margin:16px 0}
+.about-credit span{font-size:11px;color:var(--muted)}
+.about-credit b{font-family:var(--font-display);font-size:20px;color:var(--gold)}
+/* Light theme keeps the prayer accent colors while changing surfaces */
+html[data-theme="light"]{color-scheme:light;--bg:#f4f2eb;--surface:#fffdf7;--surface-2:#eeeae0;--line:#ded8c9;--fg:#25251f;--muted:#716f66;--gold:#92702f;--gold-dim:#c2a76e;--jade:#21815f}
+@media(prefers-color-scheme:light){html[data-theme="system"]{color-scheme:light;--bg:#f4f2eb;--surface:#fffdf7;--surface-2:#eeeae0;--line:#ded8c9;--fg:#25251f;--muted:#716f66;--gold:#92702f;--gold-dim:#c2a76e;--jade:#21815f}}

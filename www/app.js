@@ -128,12 +128,9 @@ schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
   if(!('IntersectionObserver' in window))return;
   var observer=new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
-      if(entry.isIntersecting){
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
-      }
+      entry.target.classList.toggle('is-visible',entry.isIntersecting);
     });
-  },{threshold:0.08,rootMargin:'0px 0px -28px 0px'});
+  },{threshold:0.06,rootMargin:'-4% 0px -8% 0px'});
   function watch(root){
     (root||document).querySelectorAll('.top,.hero,.armbar,.wrap > section,.row').forEach(function(el){
       if(el.classList.contains('reveal-motion'))return;

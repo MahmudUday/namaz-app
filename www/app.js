@@ -132,7 +132,7 @@ schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
     });
   },{threshold:0.06,rootMargin:'-4% 0px -8% 0px'});
   function watch(root){
-    (root||document).querySelectorAll('.top,.hero,.armbar,.wrap > section,.row').forEach(function(el){
+    (root||document).querySelectorAll('.top,.hero,.armbar,.page-view > section,.row').forEach(function(el){
       if(el.classList.contains('reveal-motion'))return;
       el.classList.add('reveal-motion');
       observer.observe(el);

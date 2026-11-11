@@ -1,6 +1,8 @@
 /* native alarms (Capacitor Local Notifications) */
 function plug(n){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins[n]}
-var busy=false,again=null;\nvar remindersOn=lsGet('namaz.reminders')!==false;\nvar REMINDER_MINUTES=[40,20,5];
+var busy=false,again=null;
+var remindersOn=lsGet('namaz.reminders')!==false;
+var REMINDER_MINUTES=[40,20,5];
 async function schedule(level){
   if(busy){again=Math.max(again||0,level);return}
   busy=true;

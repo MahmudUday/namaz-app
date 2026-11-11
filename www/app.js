@@ -14,8 +14,8 @@ async function schedule(level){
     if(p.display!=='granted'&&level>=1)p=await LN.requestPermissions();
     if(p.display!=='granted'){nstate={ok:false,msg:'নোটিফিকেশনের অনুমতি দেওয়া হয়নি।'};return}
     try{var ex=await LN.checkExactNotificationSetting();if(ex.exact_alarm!=='granted'&&level>=2)await LN.changeExactNotificationSetting()}catch(e){}
-    var channelId=notificationTone==='soft'?'azan_v1_soft':'azan_v1_default';
-    var channelOptions={id:channelId,name:notificationTone==='soft'?'নরম টোন':'ফোনের ডিফল্ট সাউন্ড',description:'নামাজের ওয়াক্তের অ্যালার্ম',importance:5,visibility:1,vibration:true};
+    var channelId=notificationTone==='soft'?'azan_v2_clear':'azan_v1_default';
+    var channelOptions={id:channelId,name:notificationTone==='soft'?'স্পষ্ট সুর':'ফোনের ডিফল্ট সাউন্ড',description:'নামাজের ওয়াক্তের অ্যালার্ম',importance:5,visibility:1,vibration:true};
     if(notificationTone==='soft')channelOptions.sound='azan.wav';
     await LN.createChannel(channelOptions);
     var pend=await LN.getPending();
@@ -62,7 +62,7 @@ async function testAlarm(){
   if(!LN){st.textContent='এই ফোনে নোটিফিকেশন নেই।';return}
   await schedule(2);
   try{
-    await LN.schedule({notifications:[{id:9999,title:'পরীক্ষা',body:'অ্যালার্ম এভাবে বাজবে।',schedule:{at:new Date(Date.now()+10000),allowWhileIdle:true},channelId:notificationTone==='soft'?'azan_v1_soft':'azan_v1_default'}]});
+    await LN.schedule({notifications:[{id:9999,title:'পরীক্ষা',body:'অ্যালার্ম এভাবে বাজবে।',schedule:{at:new Date(Date.now()+10000),allowWhileIdle:true},channelId:notificationTone==='soft'?'azan_v2_clear':'azan_v1_default'}]});
     st.textContent='১০ সেকেন্ড পরে নোটিফিকেশন আসবে।';
   }catch(e){st.textContent='পরীক্ষা করা যায়নি।'}
 }

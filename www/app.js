@@ -141,3 +141,27 @@ schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
     new MutationObserver(function(){watch(rows)}).observe(rows,{childList:true});
   }
 })();
+
+
+/* Bottom navigation: switch pages without reloading or interrupting alarms. */
+(function initBottomNav(){
+  var nav=document.querySelector('.bottom-nav');
+  if(!nav)return;
+  var pages={home:$('homePage'),settings:$('settingsPage'),about:$('aboutPage')};
+  nav.addEventListener('click',function(ev){
+    var btn=ev.target.closest('[data-nav]');
+    if(!btn)return;
+    var key=btn.getAttribute('data-nav');
+    if(!pages[key])return;
+    Object.keys(pages).forEach(function(k){
+      pages[k].hidden=k!==key;
+      pages[k].classList.toggle('active',k===key);
+    });
+    nav.querySelectorAll('.nav-item').forEach(function(item){
+      var active=item===btn;
+      item.classList.toggle('active',active);
+      if(active){item.setAttribute('aria-current','page')}else{item.removeAttribute('aria-current')}
+    });
+    window.scrollTo({top:0,behavior:window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  });
+})();

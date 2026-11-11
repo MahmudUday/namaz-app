@@ -639,3 +639,13 @@ html[data-theme="light"] .bottom-nav{
  .app-intro{animation:intro-exit .15s ease .35s forwards}
  .intro-emblem,.intro-crescent,.intro-mosque,.intro-clock,.intro-clock-ring,.intro-name,.intro-caption,.intro-loader:after{animation:none;opacity:1;transform:none;stroke-dashoffset:0}
 }
+
+
+/* Offline-ready schedule status */
+.offline-status{
+  display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:5px 9px;
+  border:1px solid rgba(76,184,144,.24);border-radius:999px;
+  background:rgba(76,184,144,.09);color:var(--jade);font-size:10px;font-weight:600;
+}
+.offline-status:before{content:"";width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:currentColor}
+.offline-status.offline{color:var(--gold);border-color:rgba(212,175,104,.28);background:rgba(212,175,104,.09)}

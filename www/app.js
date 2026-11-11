@@ -83,3 +83,30 @@ document.addEventListener('click',function(ev){
 });
 buildSelect();tick();setInterval(tick,1000);
 schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
+
+
+/* Motion effects are progressive enhancements and respect accessibility settings. */
+(function initMotion(){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  if(!('IntersectionObserver' in window))return;
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.08,rootMargin:'0px 0px -28px 0px'});
+  function watch(root){
+    (root||document).querySelectorAll('.top,.hero,.armbar,.wrap > section,.row').forEach(function(el){
+      if(el.classList.contains('reveal-motion'))return;
+      el.classList.add('reveal-motion');
+      observer.observe(el);
+    });
+  }
+  watch(document);
+  var rows=$('rows');
+  if(rows&&'MutationObserver' in window){
+    new MutationObserver(function(){watch(rows)}).observe(rows,{childList:true});
+  }
+})();

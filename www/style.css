@@ -252,3 +252,26 @@ html[data-theme="light"]{color-scheme:light;--bg:#f4f2eb;--surface:#fffdf7;--sur
 .tahajjud-status small{display:block;font-size:10.5px;color:var(--muted)}
 .tahajjud-note{font-size:11px;line-height:1.75;color:var(--muted);margin:10px 1px 0}
 @media(max-width:360px){.tahajjud-times b{font-size:19px}}
+
+
+/* Daily Sehri and Iftar times */
+.fasting-section{padding:17px;border:1px solid rgba(229,189,101,.32);border-radius:20px;background:radial-gradient(120% 90% at 0% 0%,rgba(229,189,101,.12),transparent 65%),var(--surface)}
+.fasting-head{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+.fasting-moon{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--gold-dim);border-radius:14px;background:rgba(212,175,104,.09);font-size:22px}
+.fasting-head h2{margin:0;color:var(--fg)}
+.fasting-head p{margin:0;color:var(--muted);font-size:11px}
+.fasting-card{border:1px solid var(--line);border-radius:15px;padding:13px;background:var(--surface-2)}
+.fasting-times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fasting-time{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fasting-icon{font-size:19px}
+.fasting-time small{font-size:11px;color:var(--muted)}
+.fasting-time b{font-family:var(--font-display);font-size:22px}
+.fasting-time span:last-child{font-size:10px;color:var(--muted)}
+.fasting-time.sehri b{color:#69b9ee}
+.fasting-time.iftar b{color:#e5bd65}
+.fasting-count{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.fasting-count b{display:block;font-family:var(--font-display);font-size:20px;color:var(--jade);letter-spacing:.04em}
+.fasting-count.iftar-now{color:var(--gold)}
+.fasting-count small{display:block;color:var(--muted);font-size:10px}
+.fasting-note{font-size:11px;line-height:1.75;color:var(--muted);margin:10px 1px 0}
+@media(max-width:360px){.fasting-time b{font-size:19px}}

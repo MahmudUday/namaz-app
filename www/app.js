@@ -1,7 +1,8 @@
 /* native alarms (Capacitor Local Notifications) */
 function plug(n){return window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins[n]}
 var busy=false,again=null;
-var remindersOn=lsGet('namaz.reminders')!==false;\nvar notificationTone=lsGet('namaz.tone')||'soft';
+var remindersOn=lsGet('namaz.reminders')!==false;
+var notificationTone=lsGet('namaz.tone')||'soft';
 var REMINDER_MINUTES=[40,20,5];
 async function schedule(level){
   if(busy){again=Math.max(again||0,level);return}
@@ -13,7 +14,10 @@ async function schedule(level){
     if(p.display!=='granted'&&level>=1)p=await LN.requestPermissions();
     if(p.display!=='granted'){nstate={ok:false,msg:'নোটিফিকেশনের অনুমতি দেওয়া হয়নি।'};return}
     try{var ex=await LN.checkExactNotificationSetting();if(ex.exact_alarm!=='granted'&&level>=2)await LN.changeExactNotificationSetting()}catch(e){}
-    var channelId=notificationTone==='soft'?'azan_v1_soft':'azan_v1_default';\n    var channelOptions={id:channelId,name:notificationTone==='soft'?'নরম টোন':'ফোনের ডিফল্ট সাউন্ড',description:'নামাজের ওয়াক্তের অ্যালার্ম',importance:5,visibility:1,vibration:true};\n    if(notificationTone==='soft')channelOptions.sound='azan.wav';\n    await LN.createChannel(channelOptions);
+    var channelId=notificationTone==='soft'?'azan_v1_soft':'azan_v1_default';
+    var channelOptions={id:channelId,name:notificationTone==='soft'?'নরম টোন':'ফোনের ডিফল্ট সাউন্ড',description:'নামাজের ওয়াক্তের অ্যালার্ম',importance:5,visibility:1,vibration:true};
+    if(notificationTone==='soft')channelOptions.sound='azan.wav';
+    await LN.createChannel(channelOptions);
     var pend=await LN.getPending();
     if(pend.notifications&&pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(function(n){return{id:n.id}})});
     var list=[],now=Date.now();
@@ -161,7 +165,8 @@ schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
     });
   }
 })();
-\n/* Bottom navigation: switch pages without reloading or interrupting alarms. */
+
+/* Bottom navigation: switch pages without reloading or interrupting alarms. */
 (function initBottomNav(){
   var nav=document.querySelector('.bottom-nav');
   if(!nav)return;

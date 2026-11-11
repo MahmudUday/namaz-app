@@ -8,17 +8,53 @@ var nstate={ok:false,msg:'অ্যালার্ম সেট করা হচ
 function tzOf(){return loc.mode==='gps'?-new Date().getTimezoneOffset()/60:6}
 
 var days=null,daysKey='',prayers=[];
-function dayData(off){
-  var tz=tzOf(),L=new Date(Date.now()+tz*36e5+off*864e5),y=L.getUTCFullYear(),m=L.getUTCMonth()+1,d=L.getUTCDate();
-  var r=calcDay(y,m,d,loc.lat,loc.lng,tz,asrMethod);
-  function D(h){return new Date(Date.UTC(y,m-1,d)+(h-tz)*36e5)}
+var PRAYER_CACHE_KEY='namaz.prayerCache';
+function cacheConfig(){return[loc.lat,loc.lng,tzOf(),asrMethod].join('|')}
+function dateParts(off,tz){
+  var L=new Date(Date.now()+tz*36e5+off*864e5);
+  return{local:L,y:L.getUTCFullYear(),m:L.getUTCMonth()+1,d:L.getUTCDate(),key:L.getUTCFullYear()+'-'+String(L.getUTCMonth()+1).padStart(2,'0')+'-'+String(L.getUTCDate()).padStart(2,'0')};
+}
+function calculateDay(parts,tz){
+  var r=calcDay(parts.y,parts.m,parts.d,loc.lat,loc.lng,tz,asrMethod);
+  function D(h){return new Date(Date.UTC(parts.y,parts.m-1,parts.d)+(h-tz)*36e5)}
   var noon=D(r.noon),sunset=D(r.sunset);
-  return{y:y,m:m,d:d,wd:L.getUTCDay(),fajr:D(r.fajr),sunrise:D(r.sunrise),noon:noon,dhuhr:new Date(noon.getTime()+120000),asr:D(r.asr),sunset:sunset,maghrib:new Date(sunset.getTime()+60000),isha:D(r.isha)};
+  return{y:parts.y,m:parts.m,d:parts.d,wd:parts.local.getUTCDay(),fajr:D(r.fajr),sunrise:D(r.sunrise),noon:noon,dhuhr:new Date(noon.getTime()+120000),asr:D(r.asr),sunset:sunset,maghrib:new Date(sunset.getTime()+60000),isha:D(r.isha)};
+}
+function packDay(d){
+  var o={y:d.y,m:d.m,d:d.d,wd:d.wd};
+  ['fajr','sunrise','noon','dhuhr','asr','sunset','maghrib','isha'].forEach(function(k){o[k]=d[k].getTime()});
+  return o;
+}
+function unpackDay(o){
+  if(!o)return null;
+  var d={y:o.y,m:o.m,d:o.d,wd:o.wd};
+  ['fajr','sunrise','noon','dhuhr','asr','sunset','maghrib','isha'].forEach(function(k){d[k]=new Date(o[k])});
+  return d;
+}
+function dayData(off){
+  var tz=tzOf(),parts=dateParts(off,tz),saved=lsGet(PRAYER_CACHE_KEY);
+  if(saved&&saved.config===cacheConfig()&&saved.days&&saved.days[parts.key])return unpackDay(saved.days[parts.key]);
+  return calculateDay(parts,tz);
+}
+function warmPrayerCache(){
+  var tz=tzOf(),daysMap={};
+  for(var i=0;i<7;i++){
+    var parts=dateParts(i,tz);
+    daysMap[parts.key]=packDay(calculateDay(parts,tz));
+  }
+  lsSet(PRAYER_CACHE_KEY,{config:cacheConfig(),generatedAt:Date.now(),days:daysMap});
+  updateOfflineStatus();
 }
 function ensureDays(){
   var tz=tzOf(),L=new Date(Date.now()+tz*36e5);
-  var key=loc.lat+','+loc.lng+','+tz+','+L.getUTCFullYear()+'-'+L.getUTCMonth()+'-'+L.getUTCDate();
-  if(key!==daysKey){days=[dayData(-1),dayData(0),dayData(1)];daysKey=key;buildPrayers()}
+  var key=cacheConfig()+','+L.getUTCFullYear()+'-'+L.getUTCMonth()+'-'+L.getUTCDate();
+  if(key!==daysKey){warmPrayerCache();days=[dayData(-1),dayData(0),dayData(1)];daysKey=key;buildPrayers()}
+}
+function updateOfflineStatus(){
+  var el=$('offlineStatus');if(!el)return;
+  var cached=lsGet(PRAYER_CACHE_KEY),count=cached&&cached.config===cacheConfig()&&cached.days?Object.keys(cached.days).length:0;
+  el.textContent=navigator.onLine?'অনলাইন · আজসহ '+bn(count||7)+' দিনের সময় সংরক্ষিত':'অফলাইন · সংরক্ষিত সময়সূচি চালু';
+  el.classList.toggle('offline',!navigator.onLine);
 }
 function buildPrayers(){
   prayers=[];

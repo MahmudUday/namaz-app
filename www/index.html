@@ -10,6 +10,7 @@
 </head>
 <body>
 <div class="wrap">
+  <main class="page-view active" id="homePage" data-page="home">
   <header class="top">
     <div><div class="date" id="date"></div><div class="place" id="place"></div></div>
     <div class="method">কারাচি পদ্ধতি · আসর হানাফি</div>
@@ -27,6 +28,8 @@
     <div class="ex" id="extras"></div>
     <p class="fine" style="margin-top:10px">সূর্যোদয়, দুপুর ও সূর্যাস্তের সময় ফরজ ছাড়া নফল নামাজ পড়া মাকরুহ। মাকরুহ সময়ের হিসাব আনুমানিক।</p>
   </section>
+  </main>
+  <main class="page-view" id="settingsPage" data-page="settings" hidden>
   <section class="set">
     <h2 style="margin:0">অবস্থান ও অ্যালার্ম</h2>
     <div class="line"><button class="btn" id="gpsBtn" type="button">জিপিএস দিয়ে অবস্থান নিন</button><span class="status" id="gpsStatus"></span></div>
@@ -41,6 +44,30 @@
     </div>
     <p class="fine"><b>ফোনের সেটিং (Tecno):</b><br>১. Settings → Apps → এই অ্যাপ → Battery → No restrictions<br>২. Phone Master → Autostart-এ এই অ্যাপ চালু করুন<br>৩. Recent apps-এ অ্যাপের ওপর চেপে ধরে Lock করুন<br>৪. Settings-এ Alarms &amp; reminders ও Notifications অনুমতি চালু রাখুন<br>অ্যালার্মের সুরটি একটি নরম টোন, আজানের রেকর্ড নয়। মসজিদের টাইম টেবিলের সাথে ১ থেকে ৩ মিনিট ফারাক হতে পারে। অ্যালার্ম ঠিক রাখতে ১৪ দিনে অন্তত একবার অ্যাপ খুলুন।</p>
   </section>
+  </main>
+  <main class="page-view about-page" id="aboutPage" data-page="about" hidden>
+    <section class="about-card">
+      <div class="about-mark" aria-hidden="true">☾</div>
+      <h1>নামাজ বাংলাদেশ</h1>
+      <p class="about-tagline">নামাজের সময় জানুন, সময়মতো আদায় করুন।</p>
+      <div class="about-divider"></div>
+      <h2>অ্যাপ সম্পর্কে</h2>
+      <p>নামাজ বাংলাদেশ অ্যাপটি প্রতিদিনের পাঁচ ওয়াক্ত নামাজের শুরু ও শেষের সময় সহজে দেখার এবং সময়মতো নোটিফিকেশন পাওয়ার জন্য তৈরি।</p>
+      <div class="about-points">
+        <div><span>◷</span><b>নামাজের সময়সূচি</b><small>আপনার অবস্থান অনুযায়ী দৈনিক সময়</small></div>
+        <div><span>♧</span><b>স্মার্ট রিমাইন্ডার</b><small>ওয়াক্ত শুরু ও শেষ হওয়ার আগের সতর্কতা</small></div>
+        <div><span>⌖</span><b>অবস্থান নির্বাচন</b><small>জিপিএস অথবা জেলা নির্বাচন</small></div>
+      </div>
+      <p class="about-note">সময় গণনা: কারাচি পদ্ধতি · আসর: হানাফি</p>
+      <p class="about-note">নামাজের সময় স্থানীয় মসজিদের নির্ভরযোগ্য সময়সূচির সঙ্গে মিলিয়ে নেবেন।</p>
+      <p class="about-version">সহজ, হালকা ও প্রয়োজনীয় একটি নামাজের সহায়ক অ্যাপ।</p>
+    </section>
+  </main>
+  <nav class="bottom-nav" aria-label="প্রধান মেনু">
+    <button class="nav-item active" type="button" data-nav="home" aria-current="page"><span class="nav-icon">⌂</span><span>হোম</span></button>
+    <button class="nav-item" type="button" data-nav="settings"><span class="nav-icon">⚙</span><span>সেটিংস</span></button>
+    <button class="nav-item" type="button" data-nav="about"><span class="nav-icon">ⓘ</span><span>আমাদের সম্পর্কে</span></button>
+  </nav>
 </div>
 
 <script src="calc.js"></script>

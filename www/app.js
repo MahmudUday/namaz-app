@@ -128,7 +128,10 @@ schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
   if(!('IntersectionObserver' in window))return;
   var observer=new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
-      entry.target.classList.toggle('is-visible',entry.isIntersecting);
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
     });
   },{threshold:0.06,rootMargin:'-4% 0px -8% 0px'});
   function watch(root){

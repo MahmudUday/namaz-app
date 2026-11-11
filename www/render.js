@@ -87,6 +87,15 @@ function renderTahajjud(){
   else html+='<div class="tahajjud-status">আজকের তাহাজ্জুদের সময় শেষ হয়েছে।';
   $('tahajjudCard').innerHTML=html;
 }
+function renderFasting(){
+  var d=days[1],tomorrow=days[2],now=Date.now(),html='';
+  var sehri=d.fajr,iftar=d.sunset,nextSehri=tomorrow.fajr;
+  html+='<div class="fasting-times"><div class="fasting-time sehri"><span class="fasting-icon">☀</span><small>আজ সেহরির শেষ</small><b>'+fmtInline(sehri)+'</b><span>ফজর শুরু হলে সেহরি শেষ</span></div><div class="fasting-time iftar"><span class="fasting-icon">☾</span><small>আজ ইফতারের সময়</small><b>'+fmtInline(iftar)+'</b><span>সূর্যাস্তের সময়</span></div></div>';
+  if(now<sehri.getTime())html+='<div class="fasting-count">সেহরির সময় শেষ হতে বাকি <b id="fastingCd">'+hms(sehri.getTime()-now)+'</b></div>';
+  else if(now<iftar.getTime())html+='<div class="fasting-count">ইফতারের সময় হতে বাকি <b id="fastingCd">'+hms(iftar.getTime()-now)+'</b></div>';
+  else if(now<nextSehri.getTime())html+='<div class="fasting-count iftar-now">আজকের ইফতারের সময় হয়ে গেছে। <small>আগামীকাল সেহরির শেষ হতে বাকি</small><b id="fastingCd">'+hms(nextSehri.getTime()-now)+'</b></div>';
+  $('fastingCard').innerHTML=html;
+}
 function renderArmbar(){
   $('armbar').innerHTML='<div class="state"><span class="dot'+(nstate.ok?' on':'')+'"></span><span>'+nstate.msg+'</span></div><button class="btn'+(nstate.ok?'':' primary')+'" id="armBtn" type="button">'+(nstate.ok?'আবার সেট করুন':'অনুমতি ঠিক করুন')+'</button>';
 }
@@ -96,9 +105,14 @@ function tick(){
   var now=Date.now(),cur=null,nxt=null,i;
   for(i=0;i<prayers.length;i++){var p=prayers[i];if(!cur&&p.s.getTime()<=now&&now<p.e.getTime())cur=p;if(!nxt&&p.s.getTime()>now)nxt=p}
   var sig=daysKey+'|'+(cur?cur.id:'-')+'|'+(nxt?nxt.id:'-')+'|'+JSON.stringify(alarms)+'|'+JSON.stringify(nstate);
-  if(sig!==lastSig){lastSig=sig;renderHeader();renderHero(cur,nxt);renderRows(cur,nxt);renderExtras();renderTahajjud();renderArmbar()}
+  if(sig!==lastSig){lastSig=sig;renderHeader();renderHero(cur,nxt);renderRows(cur,nxt);renderExtras();renderTahajjud();renderFasting();renderArmbar()}
   if(nxt&&$('cd'))$('cd').textContent=hms(nxt.s.getTime()-now);
   if(cur&&$('curleft'))$('curleft').textContent=hms(cur.e.getTime()-now);
+  var fd=days[1],fc=$('fastingCd');
+  if(fc){
+    var target=now<fd.fajr.getTime()?fd.fajr:now<fd.sunset.getTime()?fd.sunset:days[2].fajr;
+    fc.textContent=hms(target.getTime()-now);
+  }
   var tj=tahajjudTimes(),tc=$('tahajjudCd');
   if(tc){
     if(now<tj.isha.getTime())tc.textContent=hms(tj.isha.getTime()-now);

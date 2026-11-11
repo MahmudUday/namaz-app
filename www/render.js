@@ -65,6 +65,28 @@ function renderExtras(){
   function rng(a,b){return fmtInline(a)+' – '+fmtInline(b)}
   $('extras').innerHTML='<div><span class="hl">সূর্যোদয় (ফজরের শেষ)</span><span>'+fmtInline(d.sunrise)+'</span></div><div><span>মাকরুহ: সূর্যোদয়ের পর</span><span>'+rng(d.sunrise,new Date(d.sunrise.getTime()+15*m))+'</span></div><div><span>মাকরুহ: দুপুরে সূর্য মাথার ওপর</span><span>'+rng(new Date(d.dhuhr.getTime()-6*m),d.dhuhr)+'</span></div><div><span>মাকরুহ: সূর্যাস্তের আগে</span><span>'+rng(new Date(d.maghrib.getTime()-15*m),d.maghrib)+'</span></div>';
 }
+function tahajjudTimes(){
+  var now=Date.now(),today=days[1],nightStart,isha,end;
+  if(now<today.fajr.getTime()){
+    nightStart=days[0].maghrib;isha=days[0].isha;end=today.fajr;
+  }else{
+    nightStart=today.maghrib;isha=today.isha;end=days[2].fajr;
+  }
+  var duration=end.getTime()-nightStart.getTime();
+  var lastThird=new Date(end.getTime()-duration/3);
+  var bestStart=new Date(Math.max(isha.getTime(),lastThird.getTime()));
+  return{isha:isha,end:end,best:bestStart};
+}
+function renderTahajjud(){
+  var t=tahajjudTimes(),now=Date.now(),html='';
+  html+='<div class="tahajjud-times"><div><small>সাধারণ সময় শুরু</small><b>'+fmtInline(t.isha)+'</b><span>এশার পর</span></div><div><small>সময় শেষ</small><b>'+fmtInline(t.end)+'</b><span>ফজর শুরু হলে</span></div></div>';
+  html+='<div class="best-time"><span class="best-badge">উত্তম সময় · শেষ এক-তৃতীয়াংশ</span><b>'+fmtInline(t.best)+'</b><small>এই সময় থেকে ফজর পর্যন্ত</small></div>';
+  if(now<t.isha.getTime())html+='<div class="tahajjud-status">এশার পর তাহাজ্জুদের সময় শুরু হবে <b id="tahajjudCd">'+hms(t.isha.getTime()-now)+'</b></div>';
+  else if(now<t.best.getTime())html+='<div class="tahajjud-status">তাহাজ্জুদের সময় চলছে · উত্তম সময় শুরু হতে বাকি <b id="tahajjudCd">'+hms(t.best.getTime()-now)+'</b></div>';
+  else if(now<t.end.getTime())html+='<div class="tahajjud-status active">এখন রাতের উত্তম সময় চলছে <b id="tahajjudCd">'+hms(t.end.getTime()-now)+'</b><small>ফজর পর্যন্ত বাকি</small></div>';
+  else html+='<div class="tahajjud-status">আজকের তাহাজ্জুদের সময় শেষ হয়েছে।';
+  $('tahajjudCard').innerHTML=html;
+}
 function renderArmbar(){
   $('armbar').innerHTML='<div class="state"><span class="dot'+(nstate.ok?' on':'')+'"></span><span>'+nstate.msg+'</span></div><button class="btn'+(nstate.ok?'':' primary')+'" id="armBtn" type="button">'+(nstate.ok?'আবার সেট করুন':'অনুমতি ঠিক করুন')+'</button>';
 }
@@ -74,7 +96,13 @@ function tick(){
   var now=Date.now(),cur=null,nxt=null,i;
   for(i=0;i<prayers.length;i++){var p=prayers[i];if(!cur&&p.s.getTime()<=now&&now<p.e.getTime())cur=p;if(!nxt&&p.s.getTime()>now)nxt=p}
   var sig=daysKey+'|'+(cur?cur.id:'-')+'|'+(nxt?nxt.id:'-')+'|'+JSON.stringify(alarms)+'|'+JSON.stringify(nstate);
-  if(sig!==lastSig){lastSig=sig;renderHeader();renderHero(cur,nxt);renderRows(cur,nxt);renderExtras();renderArmbar()}
+  if(sig!==lastSig){lastSig=sig;renderHeader();renderHero(cur,nxt);renderRows(cur,nxt);renderExtras();renderTahajjud();renderArmbar()}
   if(nxt&&$('cd'))$('cd').textContent=hms(nxt.s.getTime()-now);
   if(cur&&$('curleft'))$('curleft').textContent=hms(cur.e.getTime()-now);
+  var tj=tahajjudTimes(),tc=$('tahajjudCd');
+  if(tc){
+    if(now<tj.isha.getTime())tc.textContent=hms(tj.isha.getTime()-now);
+    else if(now<tj.best.getTime())tc.textContent=hms(tj.best.getTime()-now);
+    else if(now<tj.end.getTime())tc.textContent=hms(tj.end.getTime()-now);
+  }
 }

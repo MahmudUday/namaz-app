@@ -550,3 +550,54 @@ html[data-theme="light"] .bottom-nav{
   .row{background-color:var(--surface)}
   .bottom-nav{background-color:var(--surface)}
 }
+
+
+/* Performance pass: avoid expensive live backdrop/filter effects while scrolling on Android WebView */
+html,body{
+  background-attachment:scroll;
+}
+.hero,.armbar,.ex,.set,.tahajjud-section,.fasting-section,.about-card,
+.row,.best-time,.about-dua,.creator-info,.setting-symbol,.tahajjud-moon,
+.fasting-moon,.creator-avatar,.about-mark,.btn,.bell,.set select,
+.social-button,.method,.bottom-nav{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.hero,.armbar,.ex,.set,.tahajjud-section,.fasting-section,.about-card{
+  background-color:var(--surface);
+}
+.row{
+  background:linear-gradient(110deg,var(--prayer-tint),transparent 76%),var(--surface);
+}
+.row.now{
+  background:linear-gradient(110deg,var(--prayer-tint),transparent 76%),var(--surface-2);
+}
+.bottom-nav{
+  background:var(--surface);
+}
+html[data-theme="light"] .bottom-nav{
+  background:var(--surface);
+}
+@media(prefers-color-scheme:light){
+  html[data-theme="system"] .bottom-nav{background:var(--surface)}
+}
+/* Opacity/transform are compositor-friendly; avoid per-frame blur rasterization */
+.reveal-motion,.reveal-motion.is-visible{
+  filter:none!important;
+}
+.reveal-motion{
+  transition:opacity .34s ease,transform .38s cubic-bezier(.22,.75,.22,1)!important;
+}
+.row.reveal-motion{
+  transition:opacity .32s ease,transform .36s cubic-bezier(.22,.75,.22,1),background .2s ease,border-color .2s ease!important;
+}
+.page-view.active{
+  animation:pageEnterFast .28s ease both;
+}
+@keyframes pageEnterFast{
+  from{opacity:.94;transform:translate3d(0,5px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal-motion,.reveal-motion.is-visible,.page-view.active{animation:none!important;transition:none!important;filter:none!important}
+}

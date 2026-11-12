@@ -122,8 +122,8 @@ jobs:
           p = Path('android/app/build.gradle')
           s = p.read_text()
           run_number = os.environ.get('GITHUB_RUN_NUMBER', '1')
-          s = re.sub(r'versionCode\\s+\\d+', 'versionCode ' + run_number, s)
-          s = re.sub(r'versionName\\s+"[^"]+"', 'versionName "1.5.1"', s)
+          s = re.sub(r'versionCode\s+\d+', 'versionCode ' + run_number, s)
+          s = re.sub(r'versionName\s+"[^"]+"', 'versionName "1.5.1"', s)
           encoded = os.environ.get('WAQT_KEYSTORE_BASE64', '')
           if encoded:
               Path('android/app/waqt-upload.jks').write_bytes(base64.b64decode(encoded))

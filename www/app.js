@@ -4,6 +4,15 @@ var busy=false,again=null;
 var remindersOn=lsGet('namaz.reminders')!==false;
 var notificationTone=lsGet('namaz.tone')||'soft';
 var REMINDER_MINUTES=[40,20,5];
+var ALARM_SIGNATURE_KEY='namaz.alarmScheduleSignature';
+function alarmScheduleSignature(){
+  var local=new Date(Date.now()+tzOf()*36e5);
+  return JSON.stringify({
+    date:local.getUTCFullYear()+'-'+(local.getUTCMonth()+1)+'-'+local.getUTCDate(),
+    location:[loc.lat,loc.lng,tzOf()],asr:asrMethod,alarms:alarms,
+    reminders:remindersOn,tone:notificationTone,horizon:7
+  });
+}
 async function schedule(level){
   if(busy){again=Math.max(again||0,level);return}
   busy=true;
@@ -19,9 +28,8 @@ async function schedule(level){
     if(notificationTone==='soft')channelOptions.sound='azan.wav';
     await LN.createChannel(channelOptions);
     var pend=await LN.getPending();
-    if(pend.notifications&&pend.notifications.length)await LN.cancel({notifications:pend.notifications.map(function(n){return{id:n.id}})});
     var list=[],now=Date.now();
-    for(var off=0;off<14;off++){
+    for(var off=0;off<7;off++){
       var d=dayData(off);
       PR.forEach(function(q,i){
         var t=d[q.k];
@@ -48,8 +56,18 @@ async function schedule(level){
         });
       }
     }
-    if(list.length)await LN.schedule({notifications:list});
-    nstate={ok:true,msg:'পরবর্তী ১৪ দিনের অ্যালার্ম সেট আছে ('+bn(list.length)+'টি)।'};
+    var signature=alarmScheduleSignature();
+    var pending=pend.notifications||[];
+    var pendingIds={};
+    pending.forEach(function(n){pendingIds[n.id]=true});
+    var alreadyCorrect=lsGet(ALARM_SIGNATURE_KEY)===signature&&list.every(function(n){return !!pendingIds[n.id]});
+    if(!alreadyCorrect){
+      var managed=pending.filter(function(n){return n.id>=1000&&n.id<2700});
+      if(managed.length)await LN.cancel({notifications:managed.map(function(n){return{id:n.id}})});
+      if(list.length)await LN.schedule({notifications:list});
+      lsSet(ALARM_SIGNATURE_KEY,signature);
+    }
+    nstate={ok:true,msg:'পরবর্তী ৭ দিনের অ্যালার্ম সেট আছে ('+bn(list.length)+'টি)।'};
   }catch(e){
     nstate={ok:false,msg:'অ্যালার্ম সেট করতে সমস্যা হয়েছে। "অনুমতি ঠিক করুন" চাপুন।'};
   }finally{
@@ -118,12 +136,20 @@ if(reminderToggle){
     schedule(0);
   });
 }
-buildSelect();tick();setInterval(tick,1000);
+window.addEventListener('error',function(ev){console.error('WAQT startup/runtime error:',ev.error||ev.message)});
+window.addEventListener('unhandledrejection',function(ev){console.error('WAQT async error:',ev.reason)});
+try{
+  buildSelect();tick();setInterval(tick,1000);
+}catch(startupError){
+  console.error('WAQT startup failed:',startupError);
+  var hero=$('hero');
+  if(hero)hero.innerHTML='<div class="current-prayer"><div class="current-name">অ্যাপ চালু করতে সমস্যা হচ্ছে</div><div class="current-range">দয়া করে অ্যাপটি বন্ধ করে আবার চালু করুন।</div></div>';
+}
 window.addEventListener('online',updateOfflineStatus);
 window.addEventListener('offline',updateOfflineStatus);
 document.addEventListener('visibilitychange',function(){if(!document.hidden){daysKey='';tick();updateOfflineStatus()}});
 updateOfflineStatus();
-schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()});
+schedule(1).then(function(){if(!savedLoc||loc.mode==='gps')useGps()}).catch(function(e){console.error('WAQT alarm initialization failed:',e)});
 
 
 /* Motion effects are progressive enhancements and respect accessibility settings. */

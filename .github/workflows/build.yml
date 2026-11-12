@@ -108,7 +108,7 @@ jobs:
         run: |
           sed -i 's#</manifest>#<uses-permission android:name="android.permission.POST_NOTIFICATIONS" /><uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /><uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /><uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" /><uses-permission android:name="android.permission.USE_EXACT_ALARM" /><uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /><uses-permission android:name="android.permission.VIBRATE" /></manifest>#' android/app/src/main/AndroidManifest.xml
 
-      - name: Configure stable APK signing (optional but recommended)
+      - name: Configure persistent APK signing
         env:
           WAQT_KEYSTORE_BASE64: ${{ secrets.WAQT_KEYSTORE_BASE64 }}
           WAQT_KEYSTORE_PASSWORD: ${{ secrets.WAQT_KEYSTORE_PASSWORD }}
@@ -119,30 +119,30 @@ jobs:
           python3 - <<'PY'
           import os, base64, re
           from pathlib import Path
+          required = ['WAQT_KEYSTORE_BASE64', 'WAQT_KEYSTORE_PASSWORD', 'WAQT_KEY_ALIAS', 'WAQT_KEY_PASSWORD']
+          missing = [key for key in required if not os.environ.get(key)]
+          if missing:
+              raise SystemExit('Configure these GitHub Actions repository secrets before building: ' + ', '.join(missing))
           p = Path('android/app/build.gradle')
           s = p.read_text()
           run_number = os.environ.get('GITHUB_RUN_NUMBER', '1')
           s = re.sub(r'versionCode\s+\d+', 'versionCode ' + run_number, s)
           s = re.sub(r'versionName\s+"[^"]+"', 'versionName "1.5.1"', s)
-          encoded = os.environ.get('WAQT_KEYSTORE_BASE64', '')
-          if encoded:
-              Path('android/app/waqt-upload.jks').write_bytes(base64.b64decode(encoded))
-              signing = '''
-              signingConfigs {
-                  stable {
-                      storeFile file("waqt-upload.jks")
-                      storePassword System.getenv("WAQT_KEYSTORE_PASSWORD")
-                      keyAlias System.getenv("WAQT_KEY_ALIAS")
-                      keyPassword System.getenv("WAQT_KEY_PASSWORD")
-                  }
+          Path('android/app/waqt-upload.jks').write_bytes(base64.b64decode(os.environ['WAQT_KEYSTORE_BASE64']))
+          signing = '''
+          signingConfigs {
+              stable {
+                  storeFile file("waqt-upload.jks")
+                  storePassword System.getenv("WAQT_KEYSTORE_PASSWORD")
+                  keyAlias System.getenv("WAQT_KEY_ALIAS")
+                  keyPassword System.getenv("WAQT_KEY_PASSWORD")
               }
-              '''
-              s = s.replace('    buildTypes {', signing + '\n    buildTypes {')
-              s = s.replace('        debug {', '        debug {\n            signingConfig signingConfigs.stable')
-              print('Using persistent WAQT signing key.')
-          else:
-              print('::warning::WAQT signing secrets are not configured; this APK will use a temporary debug key and cannot reliably update an installed APK.')
+          }
+          '''
+          s = s.replace('    buildTypes {', signing + '\\n    buildTypes {')
+          s = s.replace('        debug {', '        debug {\\n            signingConfig signingConfigs.stable')
           p.write_text(s)
+          print('Persistent WAQT signing configured; versionCode=' + run_number)
           PY
 
       - name: Build APK

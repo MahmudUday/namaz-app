@@ -137,7 +137,7 @@ jobs:
                   }
               }
               '''
-              s = s.replace('    buildTypes {', signing + '\\n    buildTypes {')
+              s = s.replace('    buildTypes {', signing + '\n    buildTypes {')
               s = s.replace('        debug {', '        debug {\\n            signingConfig signingConfigs.stable')
               print('Using persistent WAQT signing key.')
           else:

@@ -117,13 +117,13 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
         run: |
           python3 - <<'PY'
-          import os, base64
+          import os, base64, re
           from pathlib import Path
           p = Path('android/app/build.gradle')
           s = p.read_text()
           run_number = os.environ.get('GITHUB_RUN_NUMBER', '1')
-          s = s.replace('versionCode 1', 'versionCode ' + run_number)
-          s = s.replace('versionName "1.0"', 'versionName "1.5.1"')
+          s = re.sub(r'versionCode\\s+\\d+', 'versionCode ' + run_number, s)
+          s = re.sub(r'versionName\\s+"[^"]+"', 'versionName "1.5.1"', s)
           encoded = os.environ.get('WAQT_KEYSTORE_BASE64', '')
           if encoded:
               Path('android/app/waqt-upload.jks').write_bytes(base64.b64decode(encoded))
@@ -138,7 +138,7 @@ jobs:
               }
               '''
               s = s.replace('    buildTypes {', signing + '\n    buildTypes {')
-              s = s.replace('        debug {', '        debug {\\n            signingConfig signingConfigs.stable')
+              s = s.replace('        debug {', '        debug {\n            signingConfig signingConfigs.stable')
               print('Using persistent WAQT signing key.')
           else:
               print('::warning::WAQT signing secrets are not configured; this APK will use a temporary debug key and cannot reliably update an installed APK.')

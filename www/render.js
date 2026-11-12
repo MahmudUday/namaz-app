@@ -141,6 +141,7 @@ function renderArmbar(){
 }
 var lastSig='';
 function tick(){
+  try{
   ensureDays();
   var now=Date.now(),cur=null,nxt=null,i;
   for(i=0;i<prayers.length;i++){var p=prayers[i];if(!cur&&p.s.getTime()<=now&&now<p.e.getTime())cur=p;if(!nxt&&p.s.getTime()>now)nxt=p}
@@ -158,5 +159,10 @@ function tick(){
     if(now<tj.isha.getTime())tc.textContent=hms(tj.isha.getTime()-now);
     else if(now<tj.best.getTime())tc.textContent=hms(tj.best.getTime()-now);
     else if(now<tj.end.getTime())tc.textContent=hms(tj.end.getTime()-now);
+  }
+  }catch(e){
+    console.error('WAQT render error:',e);
+    var status=$('offlineStatus');
+    if(status)status.textContent='সময়সূচি দেখাতে সমস্যা হচ্ছে। অ্যাপটি আবার চালু করুন।';
   }
 }

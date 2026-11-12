@@ -139,8 +139,8 @@ jobs:
               }
           }
           '''
-          s = s.replace('    buildTypes {', signing + '\\n    buildTypes {')
-          s = s.replace('        debug {', '        debug {\\n            signingConfig signingConfigs.stable')
+          s = s.replace('    buildTypes {', signing + '\n    buildTypes {')
+          s = s.replace('        debug {', '        debug {\n            signingConfig signingConfigs.stable')
           p.write_text(s)
           print('Persistent WAQT signing configured; versionCode=' + run_number)
           PY
